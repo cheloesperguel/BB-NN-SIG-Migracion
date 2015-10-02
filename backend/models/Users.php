@@ -42,18 +42,17 @@ class Users extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-        /// Modificado : Listo 
+        /// Modificado : Listo , funcional
             [['t_user', 't_name', 't_lastname', 't_mail'], 'required'],
             [['t_password', 't_password_repeat'], 'required'],
             [['t_password_repeat'], 'compare', 'compareAttribute' => 't_password'],
             [['t_password', 'repeat_password'], 'safe'],
-            //lenght => String
             [['t_password', 't_password_repeat'], 'string', 'min'=>6, 'max'=>20],
             [['x_user'], 'string', 'max'=>4],
             [['t_user'], 'string', 'max' => 15],
             [['t_name', 't_dni', 'created', 'modified'], 'string', 'max' => 20],
             [['t_lastname'], 'string', 'max' => 40],
-            [['t_mail'], 'string', 'max' => 50],
+            [['t_mail'], 'string',
             [['t_mail'], 'match','pattern'=>'/^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$/']
         //////
         ];
@@ -108,8 +107,7 @@ class Users extends \yii\db\ActiveRecord
         return $this->hasMany(S2GroupUsersProfiles::className(), ['user_x_user' => 'x_user']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
+    /**giActiveQuery
      */
     public function getGroupOrigin()
     {
