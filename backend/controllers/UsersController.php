@@ -1,0 +1,145 @@
+<?php
+
+namespace backend\controllers;
+
+use Yii;
+use backend\models\Users;
+use backend\models\UsersSearch;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
+
+/**
+ * UsersController implements the CRUD actions for Users model.
+ */
+class UsersController extends Controller
+{
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Lists all Users models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single Users model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Creates a new Users model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new Users();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->x_user]);
+        } else {
+
+            ///////7
+            if(isset($_POST['S2Users']))
+                {
+            $model->attributes=$_POST['S2Users'];
+            $model->isNewRecord = true;
+            $internalPass = $this->generateRandomString();
+            $model->setTInternalPassword($internalPass);
+        
+            if($model->save()){
+                $dataProvider=new CActiveDataProvider('S2Users');
+
+                // conexion con geoserver
+                $properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+
+                $geoserver = new GeoserverWrapper($properties['urlGeoserver'], $properties['userGeoserver'], $properties['pwGeoserver']);
+                $geoserver->createUser($model->t_user, $model->t_internal_password);
+                // fin conexion con geoserver
+
+                $this->redirect(array('view','id'=>$model->x_user));
+                }
+            }
+            /////////7
+            
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Updates an existing Users model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->x_user]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Deletes an existing Users model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the Users model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Users the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Users::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+}
