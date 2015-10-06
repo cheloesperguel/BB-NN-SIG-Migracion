@@ -52,7 +52,7 @@ class Users extends \yii\db\ActiveRecord
             [['t_user'], 'string', 'max' => 15],
             [['t_name', 't_dni', 'created', 'modified'], 'string', 'max' => 20],
             [['t_lastname'], 'string', 'max' => 40],
-            [['t_mail'], 'string',
+            [['t_mail'], 'string', 'max'=> 50],
             [['t_mail'], 'match','pattern'=>'/^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$/']
         //////
         ];
@@ -64,7 +64,7 @@ class Users extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            ///
+            /// Listo Funcional
             'x_user' => 'Id. Usuario',
             't_user' => 'Nombre de usuario',
             't_name' => 'Nombre',
