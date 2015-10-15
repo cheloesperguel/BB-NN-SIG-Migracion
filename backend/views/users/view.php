@@ -35,12 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
             't_lastname',
             't_dni',
             't_mail',
-            'created',
+            /*'created',
             'creation_date',
             'modified',
             'modification_date',
             't_internal_password',
-            'group_origin',
+            'group_origin',*/
         ],
     ]) ?>
 

@@ -1,14 +1,16 @@
 <?php
 
 namespace backend\controllers;
-
+require_once dirname(__FILE__) . '/../extensions/FirePHPCore/fb.php';
+require_once dirname(__FILE__) . '/../components/GeoserverWrapper.php';
 use Yii;
 use backend\models\Users;
 use backend\models\UsersSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\data\ActiveDataProvider;
+use backend\components\GeoserverWrapper;
 /**
  * UsersController implements the CRUD actions for Users model.
  */
@@ -63,37 +65,29 @@ class UsersController extends Controller
     public function actionCreate()
     {
         $model = new Users();
-        /* yii2.0 , borrar si todo funciona ok 
+        /* yii2.0 , borrar si todo funciona ok */
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            
+            $model->isNewRecord = true;
+            $internalPass = $this->generateRandomString();
+            $model->setTInternalPassword($internalPass);
+
+
+            // conexion con geoserver
+            $properties = require dirname(__FILE__).'/../config/properties.php';
+
+            $geoserver = new GeoserverWrapper($properties['urlGeoserver'], $properties['userGeoserver'], $properties['pwGeoserver']);
+            $geoserver->createUser($model->t_user, $model->t_internal_password);
+            // fin conexion con geoserver
+
             return $this->redirect(['view', 'id' => $model->x_user]);
+        
         } else {
-        */
-         ////////////////// 7   
-        if(isset($_POST['Users']))
-            {
-                $model->attributes=$_POST['Users'];
-                $model->isNewRecord = true;
-                $internalPass = $this->generateRandomString();
-                $model->setTInternalPassword($internalPass);
-    
-            if($model->save()){
-                $dataProvider=new ActiveDataProvider('Users');
-
-                // conexion con geoserver
-                $properties = require dirname(__FILE__).'/../../protected/config/properties.php';
-
-                $geoserver = new GeoserverWrapper($properties['urlGeoserver'], $properties['userGeoserver'], $properties['pwGeoserver']);
-                $geoserver->createUser($model->t_user, $model->t_internal_password);
-                // fin conexion con geoserver
-
-                return $this->redirect(['view','id'=>$model->x_user]);
-            }
-        }
-        /////////7
         
         return $this->render('create', [
             'model' => $model,
         ]);
+        }
     
     }
 
@@ -124,7 +118,7 @@ class UsersController extends Controller
             }
         }
 
-        $model->t_password_repeat=$model->t_password;
+        //$model->t_password_repeat=$model->t_password;
         return $this->render('update',[
             'model'=>$model,
         ]);
@@ -136,6 +130,7 @@ class UsersController extends Controller
      * @param string $id
      * @return mixed
      */
+    // actionDelete Al parecer completa , TESTING
     public function actionDelete($id)
     {
         $properties = require dirname(__FILE__).'/../../protected/config/properties.php';
@@ -149,7 +144,8 @@ class UsersController extends Controller
                 return $properties['deleteErrorMessageUser'];
             }else {
 
-                $this->findModel($id)->delete();
+                //$this->findModel($id)->delete();
+                $model = $this->findModel($id);
 
                 // conexion con geoserver
                 $geoserver = new GeoserverWrapper($properties['urlGeoserver'], $properties['userGeoserver'], $properties['pwGeoserver']);
@@ -214,7 +210,7 @@ class UsersController extends Controller
     ////// Incompleta, Testing
     public function actionAuthenticate()
     {
-        $s2Users=new S2Users;
+        $s2Users=new Users;
         $viewpath = '//site/';
         $model2 = new LoginForm;
 
@@ -224,7 +220,7 @@ class UsersController extends Controller
             $s2Users->setTPassword($_POST['LoginForm']['password']);
                 
             $model = $s2Users->search();
-            $criteria = new CDbCriteria;
+            $criteria = new /*C*/DbCriteria;
             $criteria->addCondition("t_user = '".$_POST['LoginForm']['usuario']."'");
             $criteria->addCondition("t_password = '".$_POST['LoginForm']['password']."'");
             $results = $model->model->findAll($criteria);
@@ -237,7 +233,7 @@ class UsersController extends Controller
                 Yii::app()->session['userTUser'] = '';
                 Yii::app()->session['userXUser'] = '';
 
-                $this->render($viewpath.'login',[
+                return $this->render($viewpath.'login',[
                     'model'=>$model2,
                 ]);
 
@@ -248,7 +244,7 @@ class UsersController extends Controller
                 Yii::app()->session['userTUser'] = $results[0]->getTUser();
                 Yii::app()->session['userXUser'] = $results[0]->getXUser();
 
-                $this->render($viewpath.'login',[
+                return $this->render($viewpath.'login',[
                     'model'=>$model2,
                 ]);
 
@@ -261,7 +257,7 @@ class UsersController extends Controller
             Yii::app()->session['userXUser'] = '';
 
             $this->layout='//layouts/column1_Gen';
-            $this->render($viewpath.'login',[
+            return $this->render($viewpath.'login',[
                     'model'=>$model2,
             ]);
         }
@@ -275,6 +271,29 @@ class UsersController extends Controller
             $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
         return $randomString;
+    }
+
+    // INCOMPLETA
+    protected function performAjaxValidation($model)
+    {
+        if(isset($_POST['ajax']) && $_POST['ajax']==='s2-users-form')
+        {
+            echo /*C*/ActiveForm::validate($model);
+            Yii::app()->end();
+        }
+    }
+
+
+    public function actionAdmin()
+    {
+        $model=new  Users('search');
+        $model->unsetAttributes();  // clear any default values
+        if(isset($_GET['Users'])){
+            $model->attributes=$_GET['Users'];
+        }
+        return $this->render('admin',[
+            'model'=>$model,
+        ]);
     }
 
 
