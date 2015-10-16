@@ -1,8 +1,11 @@
 <?php
 
 namespace backend\controllers;
-require_once dirname(__FILE__) . '/../extensions/FirePHPCore/fb.php';
-require_once dirname(__FILE__) . '/../components/GeoserverWrapper.php';
+require_once (dirname(__FILE__) . '/../extensions/FirePHPCore/fb.php');
+//require_once (dirname(__FILE__) . '/../components/GeoserverWrapper.php');
+
+
+
 use Yii;
 use backend\models\Users;
 use backend\models\UsersSearch;
@@ -66,6 +69,7 @@ class UsersController extends Controller
     {
         $model = new Users();
         /* yii2.0 , borrar si todo funciona ok */
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             
             $model->isNewRecord = true;
@@ -74,7 +78,7 @@ class UsersController extends Controller
 
 
             // conexion con geoserver
-            $properties = require dirname(__FILE__).'/../config/properties.php';
+            $properties = require dirname(__FILE__).'/../config/properties.php'; // llama archivo configuraciones
 
             $geoserver = new GeoserverWrapper($properties['urlGeoserver'], $properties['userGeoserver'], $properties['pwGeoserver']);
             $geoserver->createUser($model->t_user, $model->t_internal_password);

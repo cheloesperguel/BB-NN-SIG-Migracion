@@ -1,4 +1,6 @@
 <?php
+namespace backend\components;
+
 ini_set("display_errors", "On");
 error_reporting(E_ALL);
 
@@ -308,7 +310,7 @@ class GeoserverWrapper {
 	// ########################################################################################
 	public function createUser($user, $pass) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		$properties = require dirname(__FILE__).'/../config/properties.php';
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/usergroup/default/users.xml";
 
@@ -326,7 +328,9 @@ class GeoserverWrapper {
 
 	public function deleteUser($user, $pass) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+//		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		$properties = require dirname(__FILE__).'/../config/properties.php';
+		
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/usergroup/default/users.xml";
 
@@ -355,7 +359,9 @@ class GeoserverWrapper {
 	 */
 	public function createRoles($groupId) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+	    $properties = require dirname(__FILE__).'/../config/properties.php';
+		
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/role/default/roles.xml";
 
@@ -377,7 +383,10 @@ class GeoserverWrapper {
 	 */
 	public function deleteRolEditor($groupId) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		
+		$properties = require dirname(__FILE__).'/../config/properties.php';
+		
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/role/default/roles.xml";
 
@@ -403,7 +412,9 @@ class GeoserverWrapper {
 	public function addRelationUserRole($groupId, $userId, $userName, $isEditor){
 		
 		
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		
+		$properties = require dirname(__FILE__).'/../config/properties.php';
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/role/default/roles.xml";
 
@@ -466,7 +477,9 @@ class GeoserverWrapper {
 	 */
 	public function deleteRelationUserRole($groupId, $userId, $userName, $isEditor, $delete) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		$properties = require dirname(__FILE__).'/../config/properties.php';
+		
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/role/default/roles.xml";
 
@@ -519,7 +532,9 @@ class GeoserverWrapper {
 	 */
 	public function addLayerEditRole($namespace, $groupId) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		
+		$properties = require dirname(__FILE__).'/../config/properties.php';
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/layers.properties";
 
@@ -537,7 +552,9 @@ class GeoserverWrapper {
 	 */
 	public function deleteLayerEditRole($namespace, $groupId) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		$properties = require dirname(__FILE__).'/../config/properties.php';
+		
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/layers.properties";
 
@@ -649,7 +666,8 @@ class GeoserverWrapper {
 		// fin construccion fichero
 
 		// escritura fichero
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		$properties = require dirname(__FILE__).'/../config/properties.php';
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/layers.properties";
 
@@ -665,7 +683,9 @@ class GeoserverWrapper {
 	 */
 	public function addServiceEditorTransaction($groupId) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		$properties = require dirname(__FILE__).'/../config/properties.php';
+
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/services.properties";
 
@@ -682,7 +702,9 @@ class GeoserverWrapper {
 	 */
 	public function deleteServiceEditorTransaction($groupId) {
 
-		$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		//$properties = require dirname(__FILE__).'/../../protected/config/properties.php';
+		$properties = require dirname(__FILE__).'/../config/properties.php';
+		
 		$path=$properties['geoserverHomeDataPath'];
 		$filePath=$path."/security/services.properties";
 
